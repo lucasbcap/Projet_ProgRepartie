@@ -28,6 +28,10 @@ public class LancerRaytracer {
             System.out.println(aide);
         }
 
+        Registry regLocal = LocateRegistry.getRegistry("localhost");
+        ServiceDistributeur serviceDistributeur = (ServiceDistributeur) regLocal.lookup("calcul");
+        ServiceCalcule sc = serviceDistributeur.distribuerServices();
+
 
         // création d'une fenêtre
         Disp disp = new Disp("Raytracer", largeur, hauteur);
@@ -49,9 +53,9 @@ public class LancerRaytracer {
         int division = Integer.parseInt(args[0]);
         for(int i =0;i<Math.sqrt(division);i++){
             for(int j =0;j<Math.sqrt(division);j++){
-                Image image = scene.compute((int)(x0+((l*i)/Math.sqrt(division))), (int) (y0+((j*h)/Math.sqrt(division))), (int)(l/(Math.sqrt(division))) + 1, (int)(h/Math.sqrt(division)) +1);
+                Image image = sc.calcule(scene,x0+(int)((l*i)/Math.sqrt(division)), y0+(int)((j*h)/Math.sqrt(division)), (int)(l/(Math.sqrt(division)) + 1), (int)(h/Math.sqrt(division)) +1,10,1);
                 // Affichage de l'image calculée
-                disp.setImage(image, (int) (x0+((l*i)/Math.sqrt(division))), (int) (y0+((j*h)/Math.sqrt(division))));
+                disp.setImage(image, x0+(int)((l*i)/Math.sqrt(division)), y0+(int)((j*h)/Math.sqrt(division)));
                 System.out.println("Calcul de l'image :\n - Coordonnées : "+(l/division)*i+","+(h/division)*j
                         +"\n - Taille "+ (int)(l/(Math.sqrt(division))) + "x" + (int)(h/Math.sqrt(division)));
             }

@@ -1,4 +1,3 @@
-package raytracer;
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.*;
@@ -8,13 +7,19 @@ public class LancerServiceCalcule{
     public static void main(String args[]) throws RemoteException {
       try {
           ServiceCalcule serviceCalcule = new ServiceCalcule();
-          ServiceCalculeInterface serviceCalculeObject = (ServiceCalculeInterface) UnicastRemoteObject.exportObject(serviceCalcule, 3630);
+          ServiceCalculeInterface serviceCalculeObject = (ServiceCalculeInterface) UnicastRemoteObject.exportObject(serviceCalcule, 0);
 
-          Registry regLocal = LocateRegistry.getRegistry("localhost", 3630);
+
+
+          Registry regLocal = LocateRegistry.getRegistry("localhost", 1935);
+
           ServiceDistributeur serviceDistributeur = (ServiceDistributeur) regLocal.lookup("calcul");
-          serviceDistributeur.enregistrerClient((ServiceCalcule)serviceCalculeObject);
+          serviceDistributeur.enregistrerClient(serviceCalculeObject);
+
+          System.out.println("serviceDistributeur");
         } catch (Exception e) {
-          System.out.println("Erreur");
+          System.out.println(e);
         }
+
     }
 }

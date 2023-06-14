@@ -11,7 +11,7 @@ public class LancerServiceCalcule{
 
 
 
-          Registry regLocal = LocateRegistry.getRegistry("localhost", 1935);
+          Registry regLocal = LocateRegistry.getRegistry(args[0], Integer.parseInt(args[1]));
 
           ServiceDistributeur serviceDistributeur = (ServiceDistributeur) regLocal.lookup("calcul");
           serviceDistributeur.enregistrerClient(serviceCalculeObject);

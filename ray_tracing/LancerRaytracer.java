@@ -71,17 +71,12 @@ public class LancerRaytracer {
 
         if(args.length > 2){
             fichier_description = args[4];
-            if(args.length > 1){
-                largeur = Integer.parseInt(args[1]);
-                if(args.length > 2)
-                    hauteur = Integer.parseInt(args[2]);
-            }
         }else{
             System.out.println(aide);
         }
 
         try{
-          Registry regLocal = LocateRegistry.getRegistry("localhost",1935);
+          Registry regLocal = LocateRegistry.getRegistry("localhost",Integer.parseInt(args[1]));
           ServiceDistributeur serviceDistributeur = (ServiceDistributeur) regLocal.lookup("calcul");
 
 

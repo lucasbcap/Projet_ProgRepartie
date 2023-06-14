@@ -1,17 +1,14 @@
-import java.time.Instant;
 import java.time.Duration;
+import java.time.Instant;
 import java.lang.Thread;
-
 import raytracer.Disp;
 import raytracer.Scene;
 import raytracer.Image;
 
-import java.rmi.*;
+import java.rmi.ConnectException;
+import java.rmi.RemoteException;
 import java.rmi.registry.*;
-import java.rmi.server.*;
 
-import java.time.Instant;
-import java.lang.Thread;
 
 public class LancerRaytracer {
 
@@ -46,17 +43,27 @@ public class LancerRaytracer {
 
         @Override
         public void run() {
-          try {
-              ServiceCalculeInterface sc = serviceDistributeur.distribuerServices();
-                Image image = sc.calcule(scene, xTemp, yTemp, lTemp, hTemp, 10, 1);
-                synchronized(this) {
-                    disp.setImage(image, xTemp, yTemp);
+          
+              ServiceCalculeInterface sc;
+              try {
+                Image image=null;
+                while(image==null){
+                sc = serviceDistributeur.distribuerServices();
+
+                try {
+                  image = sc.calcule(scene, xTemp, yTemp, lTemp, hTemp, 10, 1);
+                  synchronized(this) {
+                      disp.setImage(image, xTemp, yTemp);
+                  }
+                  System.out.println("Calcul de l'image :\n - Coordonnées : " + xTemp + "," + yTemp
+                              + "\n - Taille " + lTemp + "x" + hTemp);
+                  } catch (ConnectException e) {
+                    this.serviceDistributeur.deconnexion(sc);
+                  }
                 }
-                System.out.println("Calcul de l'image :\n - Coordonnées : " + xTemp + "," + yTemp
-                        + "\n - Taille " + lTemp + "x" + hTemp);
-            } catch (Exception e) {
-              System.out.println(e);
-            }
+              } catch (RemoteException e) {
+                e.printStackTrace();
+              }
         }
     }
 
@@ -93,43 +100,40 @@ public class LancerRaytracer {
         Instant debut = Instant.now();
 
         int division = Integer.parseInt(args[0]);
+        int lTemp=(int)(l/(division) + 1);
+        int hTemp=(int)(h/(division) +1);
         // Faire non pas raccine mais carré
         for(int i =0;i<division;i++){
             for(int j =0;j<division;j++){
-
-                ServiceCalculeInterface sc = serviceDistributeur.distribuerServices();
                 try{
                 int xTemp=(int)((l*i)/division);
                 int yTemp=(int)((h*j)/division);
-                int lTemp=(int)(l/(division) + 1);
-                int hTemp=(int)(h/(division) +1);
+
 
 
                 Runnable thread = new RaytracerThread(scene, serviceDistributeur, disp, xTemp, yTemp, lTemp, hTemp);
-                    new Thread(thread).start();
-                System.out.println("Calcul de l'image :\n - Coordonnées : "+xTemp+","+ yTemp
-                        +"\n - Taille "+ lTemp + "x" + hTemp);
+                new Thread(thread).start();
+                System.out.println("Calcul de l'image :\n - Coordonnées : "+xTemp+","+ yTemp+"\n - Taille "+ lTemp + "x" + hTemp);
                 }
               catch(Exception e){
                 System.out.println(e);
               }
-
             }
         }
         //Image image = sc.calcule(scene,0,0 , 512, 512,10,1);
         // Affichage de l'image calculée
         //disp.setImage(image, 0, 0);
-      }
-      catch(Exception e){
-        System.out.println(e);
-      }
 
 
 
-        //long duree = Duration.between(debut, fin).toMillis();
+        Instant fin = Instant.now();
+        long duree = Duration.between(debut, fin).toMillis();
 
-        //System.out.println("Image calculée en :"+duree+" ms");
-
+        System.out.println("Image calculée en :"+duree+" ms");
+        }
+        catch(Exception e){
+          System.out.println(e);
+        }
 
 
     }

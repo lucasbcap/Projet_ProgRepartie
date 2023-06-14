@@ -69,14 +69,8 @@ public class LancerRaytracer {
         // largeur et hauteur par défaut de l'image à reconstruire
         int largeur = 512, hauteur = 512;
 
-        if(args.length > 2){
-            fichier_description = args[4];
-        }else{
-            System.out.println(aide);
-        }
-
         try{
-          Registry regLocal = LocateRegistry.getRegistry("localhost",Integer.parseInt(args[1]));
+          Registry regLocal = LocateRegistry.getRegistry(args[1],Integer.parseInt(args[2]));
           ServiceDistributeur serviceDistributeur = (ServiceDistributeur) regLocal.lookup("calcul");
 
 

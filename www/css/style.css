@@ -148,7 +148,7 @@ header{
 
 .download:hover{
     transform: scale(1.05);
-    box-shadow: 0 15px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.3);
 }
 
 .download:active{
@@ -172,6 +172,7 @@ header{
 
 .schema{
     display: flex;
+    flex-grow: 0;
     font-weight: bold;
     flex-direction: column;
     font-size: 1.5em;
@@ -186,4 +187,6 @@ header{
 img{
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    max-width: 30%;
+    height: auto;
 }
